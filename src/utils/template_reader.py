@@ -52,8 +52,6 @@ def read_content_controls(caminho_do_arquivo):
             ".//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}sdt"
         )
 
-        print(f"🔎 Encontrados {len(sdt_elements)} ContentControls.")
-
         for sdt_element in sdt_elements:
             sdt_props = sdt_element.find(
                 ".//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}sdtPr"
@@ -96,8 +94,6 @@ def read_content_controls(caminho_do_arquivo):
             if not texto_conteudo:
                 texto_conteudo = "-"
 
-            print(f"📖 Lendo campo: Tag='{tag}', Conteúdo='{texto_conteudo}'")
-
             # Armazena todos os campos em um dicionário temporário
             if tag:
                 campos_encontrados[tag] = texto_conteudo
@@ -124,8 +120,4 @@ def read_content_controls(caminho_do_arquivo):
             display_name = tag_map.get(tag, tag)
             campos_gerais[display_name] = content
 
-    print(
-        f"✅ Leitura concluída. Campos gerais: {len(campos_gerais)}, Revisões: {len(campos_revisoes)}"
-    )
-    print(campos_revisoes)
     return campos_gerais, campos_revisoes

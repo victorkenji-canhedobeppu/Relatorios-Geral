@@ -1,7 +1,13 @@
 import os
 import customtkinter as ctk
 import datetime
-from utils import FileManager, AnttFieldsManager
+from utils import (
+    FileManager,
+    AnttFieldsManager,
+    update_doc_tags,
+    update_doc_with_headings_and_toc,
+)
+from modules import DocumentController
 
 
 class App(ctk.CTk):
@@ -86,6 +92,9 @@ class App(ctk.CTk):
         self.config_frame = None
         self.chapter_entries = []
         self.antt_manager = None
+        self.doc_controller = DocumentController()
+
+        self.caminho_do_arquivo = None
 
         self._update_formats()
 
@@ -159,10 +168,12 @@ class App(ctk.CTk):
 
         selected_template = self.template_optionmenu.get()
         selected_format = self.format_optionmenu.get()
-        caminho_do_arquivo = os.path.join(
+        self.caminho_do_arquivo = os.path.join(
             "src", "templates", selected_template, selected_format
         )
-        self.antt_manager = AnttFieldsManager(self.config_frame, caminho_do_arquivo)
+        self.antt_manager = AnttFieldsManager(
+            self.config_frame, self.caminho_do_arquivo
+        )
 
         generate_button = ctk.CTkButton(
             self.config_frame,
@@ -186,6 +197,18 @@ class App(ctk.CTk):
                 data = self.antt_manager.get_field_values()
                 print("\nDados dos campos ANTT:")
                 print(data)
+                try:
+
+                    # Chama a função de atualização com o novo caminho e os dados
+                    self.doc_controller.update_doc_tags(self.caminho_do_arquivo, data)
+                    self.doc_controller.update_doc_with_headings_and_toc(
+                        self.caminho_do_arquivo
+                    )
+
+                    print("Documento atualizado com sucesso!")
+
+                except Exception as e:
+                    print(f"Erro ao salvar e atualizar o documento: {e}")
         else:
             print("\nNomes dos Capítulos:")
             for i, entry in enumerate(self.chapter_entries):
